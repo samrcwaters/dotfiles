@@ -35,9 +35,6 @@ eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 # Tmux utilities
-function does-session-exist {
-  [[ $(tmux ls | grep $1 | wc -l) -gt 1 ]] && return 1 || return 0
-}
 
 function txinit {
   # Create a new tmux session with windows for each directory in TMUX_DEFAULT_DIRS
