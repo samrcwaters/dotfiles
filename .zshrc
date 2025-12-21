@@ -38,21 +38,20 @@ eval "$(pyenv virtualenv-init -)"
 
 function txinit {
   # Create a new tmux session with windows for each directory in TMUX_DEFAULT_DIRS
-  local dirs=("${(@s/ /)TMUX_DEFAULT_DIRS}")
-  local first_dir="${dirs[1]}"
+  local first_dir="${TMUX_DEFAULT_DIRS[1]}"
   local session_name=$(basename "$first_dir")
 
   # Create the first window
-  tmux new-session -s "$session_name" -c "$first_dir" -d -n "$session_name"
+  tmux new-session -s "$session_name" -c "$first_dir" -d -n "$(basename "$first_dir")"
 
   # Create windows for remaining directories
-  for dir in "${dirs[@]:1}"; do
+  for dir in "${TMUX_DEFAULT_DIRS[@]:1}"; do
     local window_name=$(basename "$dir")
-    tmux new-window -t "$session_name" -c "$dir" -n "$window_name"
+    tmux new-window -t "$session_name:" -c "$dir" -n "$window_name"
   done
 
   # Select the first window and attach
-  tmux select-window -t "$session_name:1"
+  tmux select-window -t "$session_name:0"
   tmux attach-session -t "$session_name"
 }
 
