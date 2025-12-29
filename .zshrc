@@ -13,7 +13,8 @@ plugins=(
   zsh-autosuggestions # for recall of commonly-typed commands 
 )
 
-source $ZSH_SH
+# zsh-autocomplete
+zstyle ':autocomplete:*' min-input 6
 
 # Aliases
 alias tf="terraform"
@@ -101,3 +102,5 @@ if [[ $os == "Linux" ]]; then
 else
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
+
+source $ZSH_SH
