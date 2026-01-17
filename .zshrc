@@ -87,9 +87,11 @@ function txinit {
 }
 
 function txopen {
-  # Open a new tmux window in the current session with name based on current directory
-  local window_name=$(basename "$PWD")
-  tmux new-window -c "$PWD" -n "$window_name"
+  # Open a new tmux window in the current session with name based on target directory
+  local target_dir="${1:-$PWD}"
+  target_dir="${target_dir/#\~/$HOME}"
+  local window_name=$(basename "$target_dir")
+  tmux new-window -c "$target_dir" -n "$window_name"
 }
 
 # Other
