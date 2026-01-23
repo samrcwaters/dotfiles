@@ -39,9 +39,9 @@ eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 # Utilities
-source $HOME/dotfiles/lib/git_utils.sh
-source $HOME/dotfiles/lib/tmux_utils.sh
-source $HOME/dotfiles/lib/kubectl_utils.sh
+for file in $HOME/dotfiles/lib/*.sh; do
+  source "$file"
+done
 
 # Other
 ## Needed for claude
