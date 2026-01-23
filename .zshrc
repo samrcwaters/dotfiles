@@ -38,61 +38,10 @@ export TS_NODE_COMPILER_OPTIONS='{"module":"commonjs","moduleResolution":"node"}
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
-# Git utilities
-
-function ccommit {
-  # Extract ticket number from branch name and create conventional commit
-  # Usage: ccommit add something for feature X
-  # Example: On branch ENG-3227--do-something, creates commit "ENG-3227: add something for feature X"
-
-  local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-  if [[ $? -ne 0 ]]; then
-    echo "Error: Not in a git repository"
-    return 1
-  fi
-
-  # Extract ticket number (everything before the first -- if it exists, otherwise use the whole branch name)
-  local ticket=$(echo "$branch" | sed 's/--.*$//')
-
-  # Check if ticket is empty
-  if [[ -z "$ticket" ]]; then
-    echo "Error: Could not extract ticket number from branch name"
-    return 1
-  fi
-
-  # Create commit message
-  local message="$ticket: $*"
-  git commit -m "$message"
-}
-
-# Tmux utilities
-
-function txinit {
-  # Create a new tmux session with windows for each directory in TMUX_DEFAULT_DIRS
-  local first_dir="${TMUX_DEFAULT_DIRS[1]}"
-  local session_name=$(basename "$first_dir")
-
-  # Create the first window
-  tmux new-session -s "$session_name" -c "$first_dir" -d -n "$(basename "$first_dir")"
-
-  # Create windows for remaining directories
-  for dir in "${TMUX_DEFAULT_DIRS[@]:1}"; do
-    local window_name=$(basename "$dir")
-    tmux new-window -t "$session_name:" -c "$dir" -n "$window_name"
-  done
-
-  # Select the first window and attach
-  tmux select-window -t "$session_name:0"
-  tmux attach-session -t "$session_name"
-}
-
-function txopen {
-  # Open a new tmux window in the current session with name based on target directory
-  local target_dir="${1:-$PWD}"
-  target_dir="${target_dir/#\~/$HOME}"
-  local window_name=$(basename "$target_dir")
-  tmux new-window -c "$target_dir" -n "$window_name"
-}
+# Utilities
+source $HOME/dotfiles/lib/git_utils.sh
+source $HOME/dotfiles/lib/tmux_utils.sh
+source $HOME/dotfiles/lib/kubectl_utils.sh
 
 # Other
 ## Needed for claude
