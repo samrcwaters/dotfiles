@@ -3,7 +3,7 @@
 function ccommit {
   # Extract ticket number from branch name and create conventional commit
   # Usage: ccommit add something for feature X
-  # Example: On branch ENG-3227--do-something, creates commit "ENG-3227: add something for feature X"
+  # Example: On branch ENG-3227-v2 or ENG-3227--do-something, creates commit "ENG-3227: add something for feature X"
 
   local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
   if [[ $? -ne 0 ]]; then
@@ -11,8 +11,8 @@ function ccommit {
     return 1
   fi
 
-  # Extract ticket number (everything before the first -- if it exists, otherwise use the whole branch name)
-  local ticket=$(echo "$branch" | sed 's/--.*$//')
+  # Extract ticket number (PROJECT-NUMBER pattern from the start of branch name)
+  local ticket=$(echo "$branch" | sed 's/^\([A-Z]*-[0-9]*\).*/\1/')
 
   # Check if ticket is empty
   if [[ -z "$ticket" ]]; then

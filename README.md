@@ -3,6 +3,7 @@
 - Oh-My-Zsh
 - Neovim
 - ripgrep
+- fzf
 - fd
 - jq
 - nvm
