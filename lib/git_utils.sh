@@ -1,6 +1,17 @@
 #!/bin/zsh
 
-function ccommit {
+function cherrylog {
+  # Show recent commits from a branch for cherry-picking
+  # Usage: cherrylog <branch> [n]
+  # Example: cherrylog feature-branch 5
+
+  local branch="${1:?Usage: cherrylog <branch> [n]}"
+  local count="${2:-10}"
+
+  git --no-pager log "$branch" -n "$count" --pretty=format:"%h %s"
+}
+
+function conventional-commit {
   # Extract ticket number from branch name and create conventional commit
   # Usage: ccommit add something for feature X
   # Example: On branch ENG-3227-v2 or ENG-3227--do-something, creates commit "ENG-3227: add something for feature X"
@@ -24,3 +35,4 @@ function ccommit {
   local message="$ticket: $*"
   git commit -m "$message"
 }
+alias ccommit=conventional-commit
