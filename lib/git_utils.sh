@@ -8,7 +8,7 @@ function cherrylog {
   local branch="${1:?Usage: cherrylog <branch> [n]}"
   local count="${2:-10}"
 
-  git --no-pager log "$branch" -n "$count" --pretty=format:"%h %s"
+  git --no-pager log "$branch" -n "$count" --reverse --pretty=format:"%h %<(50,trunc)%s %ai"
 }
 
 function conventional-commit {
