@@ -6,7 +6,7 @@
 declare -A git_aliases
 git_aliases=(
   [co]="checkout"
-  [br]="br"
+  [b]="branch"
   [ci]="commit"
   [st]="status"
 )
