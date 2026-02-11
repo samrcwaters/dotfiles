@@ -23,7 +23,7 @@ function conventional-commit {
   fi
 
   # Extract ticket number (PROJECT-NUMBER pattern from the start of branch name)
-  local ticket=$(echo "$branch" | sed 's/^\([A-Z]*-[0-9]*\).*/\1/')
+  local ticket=$(echo "$branch" | sed 's/^.*\/\([A-Z]*-[0-9]*\).*/\1/')
 
   # Check if ticket is empty
   if [[ -z "$ticket" ]]; then
