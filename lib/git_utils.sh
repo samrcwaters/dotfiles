@@ -36,3 +36,8 @@ function conventional-commit {
   git commit -m "$message"
 }
 alias ccommit=conventional-commit
+
+# Misc aliases
+alias gps="git push"
+alias gpfwl="gps --force-with-lease"
+alias gpl="git pull"
