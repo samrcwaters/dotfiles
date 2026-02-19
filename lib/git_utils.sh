@@ -38,8 +38,10 @@ function conventional-commit {
 alias ccommit=conventional-commit
 
 # Misc aliases
+alias gc="git branch"
 alias gco="git checkout"
 alias gps="git push"
 alias gpfwl="gps --force-with-lease"
 alias gpl="git pull"
+alias gcp="git cherry-pick"
 
