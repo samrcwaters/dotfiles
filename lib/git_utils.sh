@@ -37,6 +37,34 @@ function conventional-commit {
 }
 alias ccommit=conventional-commit
 
+# GitLab
+
+function glab-list-commits {
+  local jira_issue_id="${1:?Usage: glab-list-commits <jira_issue_id>}"
+
+  echo "Gathering all commits from MRs targeting develop for issue $jira_issue_id"
+
+  local develop_mrs
+  develop_mrs=$(glab mr list --target-branch develop --search "$jira_issue_id" --merged -F json | jq -r '.[].iid')
+
+  if [[ -z "$develop_mrs" ]]; then
+    echo "No merged MRs found targeting develop for issue $jira_issue_id"
+    return 0
+  fi
+
+  local all_commits=()
+  while IFS= read -r iid; do
+    local commits
+    commits=$(glab api "projects/:fullpath/merge_requests/$iid/commits" | \
+      jq -r '.[] | "\(.committed_date) \(.short_id) \(.title)"')
+    while IFS= read -r line; do
+      [[ -n "$line" ]] && all_commits+=("$line")
+    done <<< "$commits"
+  done <<< "$develop_mrs"
+
+  printf '%s\n' "${all_commits[@]}" | sort
+}
+
 # Misc aliases
 alias gc="git branch"
 alias gco="git checkout"
@@ -44,4 +72,5 @@ alias gps="git push"
 alias gpfwl="gps --force-with-lease"
 alias gpl="git pull"
 alias gcp="git cherry-pick"
+alias gri="git rebase -i"
 
