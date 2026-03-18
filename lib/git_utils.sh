@@ -65,6 +65,34 @@ function glab-list-commits {
   printf '%s\n' "${all_commits[@]}" | sort
 }
 
+function make-dev-branch {
+  local current_branch=$(git branch --show-current)
+  local new_branch="$current_branch-dev"
+  git checkout -b $new_branch
+  git fetch origin
+  git merge origin/develop
+}
+
+function create-gitlab-merge-request {
+  local draft=0
+  local args=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -d) draft=1; shift ;;
+      *) args+=("$1"); shift ;;
+    esac
+  done
+  local target_branch="${args[1]}"
+  local title="${args[2]}"
+  local draft_flag=()
+  [[ $draft -eq 1 ]] && draft_flag=(--draft)
+  glab mr create \
+    --target-branch $target_branch \
+    --title "$title" \
+    "${draft_flag[@]}"
+}
+alias mkmr="create-gitlab-merge-request"
+
 # Misc aliases
 alias gc="git branch"
 alias gco="git checkout"
