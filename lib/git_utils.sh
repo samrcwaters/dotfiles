@@ -11,10 +11,9 @@ function cherrylog {
   git --no-pager log "$branch" -n "$count" --reverse --pretty=format:"%h %<(50,trunc)%s %ai"
 }
 
-function conventional-commit {
-  # Extract ticket number from branch name and create conventional commit
-  # Usage: ccommit add something for feature X
-  # Example: On branch ENG-3227-v2 or ENG-3227--do-something, creates commit "ENG-3227: add something for feature X"
+function ticket {
+  # Extract Jira ticket number from current branch and copy to clipboard
+  # Handles branches like: feat/ENG-1234, ENG-1234--something, ENG-3227-v2
 
   local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
   if [[ $? -ne 0 ]]; then
@@ -22,23 +21,30 @@ function conventional-commit {
     return 1
   fi
 
-  # Extract ticket number (PROJECT-NUMBER pattern from the start of branch name)
-  local ticket=$(echo "$branch" | sed 's/^.*\/\([A-Z]*-[0-9]*\).*/\1/')
+  local ticket=$(echo "$branch" | grep -oE '[A-Z]+-[0-9]+' | head -1)
 
-  # Check if ticket is empty
   if [[ -z "$ticket" ]]; then
     echo "Error: Could not extract ticket number from branch name"
     return 1
   fi
 
-  # Create commit message
-  local message="$ticket: $*"
-  git commit -m "$message"
+  echo "$ticket"
 }
-alias ccommit=conventional-commit
+
+function create-conventional-commit-for-jira-ticket {
+  $ticket | pbcopy
+  cz commit
+}
+
+function make-dev-branch {
+  local current_branch=$(git branch --show-current)
+  local new_branch="$current_branch-dev"
+  git checkout -b $new_branch
+  git fetch origin
+  git merge origin/develop
+}
 
 # GitLab
-
 function glab-list-commits {
   local jira_issue_id="${1:?Usage: glab-list-commits <jira_issue_id>}"
 
@@ -65,14 +71,6 @@ function glab-list-commits {
   printf '%s\n' "${all_commits[@]}" | sort
 }
 
-function make-dev-branch {
-  local current_branch=$(git branch --show-current)
-  local new_branch="$current_branch-dev"
-  git checkout -b $new_branch
-  git fetch origin
-  git merge origin/develop
-}
-
 function create-gitlab-merge-request {
   local draft=0
   local args=()
@@ -89,6 +87,7 @@ function create-gitlab-merge-request {
   glab mr create \
     --target-branch $target_branch \
     --title "$title" \
+    --description '' \
     "${draft_flag[@]}"
 }
 alias mkmr="create-gitlab-merge-request"
@@ -102,3 +101,5 @@ alias gpl="git pull"
 alias gcp="git cherry-pick"
 alias gri="git rebase -i"
 
+alias czc="cz commit"
+alias jczc="create-conventional-commit-for-jira-ticket"
