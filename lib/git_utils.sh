@@ -27,8 +27,9 @@ function ticket {
     echo "Error: Could not extract ticket number from branch name"
     return 1
   fi
-
-  echo "$ticket"
+  
+  # Remove whitespace and trailing newline
+  printf '%s' "$ticket" | xargs 
 }
 
 function create-conventional-commit-for-jira-ticket {
