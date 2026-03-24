@@ -45,6 +45,25 @@ function make-dev-branch {
   git merge origin/develop
 }
 
+function gather-tickets-from-commits {
+  if [[ $# -lt 2 ]]; then
+    echo "Usage: $(basename "$0") <base-branch> <compare-branch>"
+    return 1
+  fi
+
+  BASE="$1"
+  COMPARE="$2"
+
+  tickets=$(git log "$BASE".."$COMPARE" --oneline | grep -oE 'ENG-[0-9]+' | sort -u)
+
+  if [[ -z "$tickets" ]]; then
+    echo "No tickets found in commits between $BASE and $COMPARE"
+    return 0
+  fi
+
+  echo "$tickets" | sed 's/^/- /'
+}
+
 # GitLab
 function glab-list-commits {
   local jira_issue_id="${1:?Usage: glab-list-commits <jira_issue_id>}"
