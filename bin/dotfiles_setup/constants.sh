@@ -6,7 +6,6 @@ backups_dir=backups
 file_names=(
   ".tmux.conf"
 	".zshrc"
-	".zprofile"
 	".config/nvim"
 	"bin"
   "lib"

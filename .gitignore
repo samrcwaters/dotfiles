@@ -1,5 +1,6 @@
 .DS_Store
 backups
 .gitconfig
+.zprofile
 lua-*
 *.zwc
